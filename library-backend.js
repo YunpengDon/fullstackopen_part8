@@ -7,6 +7,7 @@ require('dotenv').config()
 
 const Author = require('./models/author')
 const Book = require('./models/book')
+const author = require('./models/author')
 
 const MONGODB_URI = process.env.MONGODB_URI
 console.log('Connecting to', MONGODB_URI);
@@ -144,16 +145,29 @@ const resolvers = {
     bookCount : async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      // let filteredBooks = books
-      // filteredBooks = args.author ? filteredBooks.filter(book => book.author === args.author) : filteredBooks
-      // filteredBooks = args.genre ? filteredBooks.filter(book => book.genres.includes(args.genre)) : filteredBooks
-      // return filteredBooks
-      return Book.find({}).populate('author')
+      let filters = {}
+
+      // filter the book by author's name, if the author's name cannot be found in the database, returen an empty array directly 
+      if (args.author) {
+        const author = await Author.findOne({name: args.author})
+        if (author) {
+          filters = {...filters, author: author._id}
+        } else {
+          return []
+        }
+      }
+
+      // filter the book by genre
+      filters = args.genre ? {...filters, genres: args.genre} : filters
+
+      return Book.find(filters).populate('author')
     },
     allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount : (root) => books.filter(book => book.author === root.name).length
+    bookCount : async (root) => {
+      return await Book.countDocuments({author: root._id})
+    }
   },
   Mutation: {
     addAuthor: async (root, args) => {
@@ -164,12 +178,11 @@ const resolvers = {
       })
       return newAuthor.save()
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name)
-      const newAuthor = {...author, born: args.setBornTo}
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({name: args.name})
       if (author) {
-        authors = authors.map(a => a.name === args.name ? newAuthor: a)
-        return newAuthor
+        author.born = args.setBornTo
+        return author.save()
       }
       return null
     },
