@@ -8,6 +8,7 @@ require('dotenv').config()
 const Author = require('./models/author')
 const Book = require('./models/book')
 const author = require('./models/author')
+const { GraphQLError } = require('graphql')
 
 const MONGODB_URI = process.env.MONGODB_URI
 console.log('Connecting to', MONGODB_URI);
@@ -176,34 +177,77 @@ const resolvers = {
         born: args.born,
         id: uuid()
       })
-      return newAuthor.save()
+
+      try {
+        await newAuthor.save()
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          throw new GraphQLError('Validation failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              validationErrors: error.errors
+            }
+          })
+        }
+        throw new GraphQLError('Saving author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      return newAuthor
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({name: args.name})
       if (author) {
-        author.born = args.setBornTo
-        return author.save()
+        try {
+          author.born = args.setBornTo
+          await author.save()
+          return author
+        } catch (error) {
+          throw new GraphQLError('Edit author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
+        }
       }
       return null
     },
     addBook: async (root, args) => {
-      let author = await Author.findOne({name: args.author})
-      if (! author) {
-        const newAuthor = new Author({
-          name: args.author, 
-          born: null,
+      try {
+        let author = await Author.findOne({name: args.author})
+        if (! author) {
+          const newAuthor = new Author({
+            name: args.author, 
+            born: null,
+            id: uuid()
+          })
+          author = await newAuthor.save()
+        }
+        const newBook = new Book({
+          title: args.title,
+          author: author._id,
+          published: args.published,
+          genres: args.genres,
           id: uuid()
         })
-        author = await newAuthor.save()
+        await newBook.save()
+        return newBook.populate('author')
+      } catch (error) {
+        throw new GraphQLError('Saving books failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
       }
-      const newBook = new Book({
-        title: args.title,
-        author: author._id,
-        published: args.published,
-        genres: args.genres,
-        id: uuid()
-      })
-      return newBook.save()
     }
   }
 }
