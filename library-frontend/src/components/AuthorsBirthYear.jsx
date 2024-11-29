@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import Select from "react-select"
 
-import { EDIT_AUTHOR_BIRTHYEAR } from "./queries";
+import { EDIT_AUTHOR_BIRTHYEAR, ALL_AUTHORS } from "./queries";
 
 const AuthorsBirthYear = ({authors}) => {
   const [name, setName] = useState("")
   const [bornYear, setBornYear] = useState("")
 
-  const [editAuthorBornYear, result] = useMutation(EDIT_AUTHOR_BIRTHYEAR) 
+  const [editAuthorBornYear, result] = useMutation(EDIT_AUTHOR_BIRTHYEAR, {
+    refetchQueries: [{query: ALL_AUTHORS}]
+  }) 
 
   const nameOptions = authors.map(a => {
     return {value: a.name, label:a.name}

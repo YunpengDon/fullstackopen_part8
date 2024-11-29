@@ -7,9 +7,7 @@ import AuthorsBirthYear from "./AuthorsBirthYear";
 
 const Authors = (props) => {
   const {token} = useContext(TokenContext)
-  const result = useQuery(ALL_AUTHORS, {
-    pollInterval: 3000
-  })
+  const result = useQuery(ALL_AUTHORS)
 
   if (!props.show) {
     return null
