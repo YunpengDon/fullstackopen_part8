@@ -1,9 +1,12 @@
 import { useQuery } from "@apollo/client";
+import { useContext } from "react";
 
 import { ALL_AUTHORS } from "./queries";
+import TokenContext from "../hooks/TokenContext";
 import AuthorsBirthYear from "./AuthorsBirthYear";
 
 const Authors = (props) => {
+  const {token} = useContext(TokenContext)
   const result = useQuery(ALL_AUTHORS, {
     pollInterval: 3000
   })
@@ -38,7 +41,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <AuthorsBirthYear authors={authors}/>
+      {
+        token && <AuthorsBirthYear authors={authors}/>
+      }
     </div>
   )
 }
