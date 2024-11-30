@@ -6,19 +6,24 @@ import { ALL_BOOKS } from "./queries";
 const Books = (props) => {
   const [genre, setGenre] = useState('')
   
-  const result = useQuery(ALL_BOOKS)
+  const allBookResult = useQuery(ALL_BOOKS, {
+    variables: {genre: ""}
+  })
+  const filterBookResult = useQuery(ALL_BOOKS,{
+    variables: {genre}
+  })
   
   if (!props.show) {
     return null
   }
   
 
-  if (result.loading) {
+  if (allBookResult.loading || filterBookResult.loading) {
     return <div>loading...</div>
   }
 
-  const books = result.data.allBooks
-  const genres = books.reduce((acc, book) => {
+  const allBooks = allBookResult.data.allBooks
+  const genres = allBooks.reduce((acc, book) => {
     book.genres.forEach(genre => {
       if (!acc.includes(genre)) {
         acc.push(genre)
@@ -27,7 +32,7 @@ const Books = (props) => {
     return acc
   }, [])
 
-  
+  const filterBooks = filterBookResult.data.allBooks
 
   return (
     <div>
@@ -40,7 +45,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => {
+          {filterBooks.map((a) => {
             if (genre==='' || a.genres.includes(genre)) {
               return (
               <tr key={a.title}>

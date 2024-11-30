@@ -1,9 +1,12 @@
 import { useQuery } from "@apollo/client";
 import { CURRENT_USER, ALL_BOOKS } from "./queries";
+import { useEffect } from "react";
 
 const Recommend = (props) => {
   const currentUserResult = useQuery(CURRENT_USER)
-  const bookResult = useQuery(ALL_BOOKS)
+  const bookResult = useQuery(ALL_BOOKS, {
+    variables: {genre: ""}
+  })
 
   if (!props.show) {
     return null
