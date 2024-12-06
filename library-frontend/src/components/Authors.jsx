@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useContext } from "react";
 
-import { ALL_AUTHORS } from "./queries";
+import { ALL_AUTHORS } from "../queries";
 import TokenContext from "../hooks/TokenContext";
 import AuthorsBirthYear from "./AuthorsBirthYear";
 

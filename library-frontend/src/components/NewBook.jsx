@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 
-import { ADD_BOOK, ALL_BOOKS } from "./queries";
+import { ADD_BOOK, ALL_BOOKS } from "../queries";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState("");

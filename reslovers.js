@@ -1,4 +1,4 @@
-const { PubSub } = require('graphql-subscriptions')
+const { PubSub } = require("graphql-subscriptions");
 const { v1: uuid } = require("uuid");
 const { GraphQLError } = require("graphql");
 
@@ -8,7 +8,7 @@ const Author = require("./models/author");
 const Book = require("./models/book");
 const User = require("./models/user");
 
-const pubsub = new PubSub()
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -108,7 +108,6 @@ const resolvers = {
       return null;
     },
     addBook: async (root, args, context) => {
-      // TODO: Do a backend implementation for subscription bookAdded, which returns the details of all new books to its subscribers.
       const currentUser = context.currentUser;
       if (!currentUser) {
         throw new GraphQLError("not authenticated", {
@@ -135,7 +134,7 @@ const resolvers = {
           id: uuid(),
         });
         await newBook.save();
-        pubsub.publish('BOOK_ADDED', { bookAdded: newBook})
+        pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
         return newBook.populate("author");
       } catch (error) {
         throw new GraphQLError("Saving books failed", {
@@ -208,9 +207,9 @@ const resolvers = {
   },
   Subscription: {
     bookAdded: {
-      subscribe: () => pubsub.asyncIterableIterator('BOOK_ADDED')
-    }
-  }
+      subscribe: () => pubsub.asyncIterableIterator("BOOK_ADDED"),
+    },
+  },
 };
 
 module.exports = resolvers;

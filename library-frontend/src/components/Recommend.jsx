@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { CURRENT_USER, ALL_BOOKS } from "./queries";
+import { CURRENT_USER, ALL_BOOKS } from "../queries";
 import { useEffect } from "react";
 
 const Recommend = (props) => {

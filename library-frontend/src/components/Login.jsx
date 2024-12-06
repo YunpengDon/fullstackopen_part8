@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useEffect, useState, useContext } from "react";
 import TokenContext from "../hooks/TokenContext";
-import { LOGIN } from "./queries";
+import { LOGIN } from "../queries";
 
 const Login = (props) => {
   const { setToken, setPage } = useContext(TokenContext);

@@ -1,5 +1,5 @@
-const { WebSocketServer } = require('ws')
-const { useServer } = require('graphql-ws/lib/use/ws')
+const { WebSocketServer } = require("ws");
+const { useServer } = require("graphql-ws/lib/use/ws");
 
 const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@apollo/server/express4");
@@ -114,13 +114,13 @@ const start = async () => {
   const app = express();
   const httpServer = http.createServer(app);
 
-  const wsServer  = new WebSocketServer({
+  const wsServer = new WebSocketServer({
     server: httpServer,
-    path: '/'
-  })
+    path: "/",
+  });
 
-  const schema = makeExecutableSchema({ typeDefs, resolvers })
-  const serverCleanup = useServer({schema}, wsServer)
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const serverCleanup = useServer({ schema }, wsServer);
 
   const server = new ApolloServer({
     schema,
@@ -130,15 +130,13 @@ const start = async () => {
         async serverWillStart() {
           return {
             async drainServer() {
-              await serverCleanup.dispose()
-            }
-          }
-        }
-      }
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
   });
-
-  // NEXT: deploy PubSub function
 
   await server.start();
 

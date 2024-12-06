@@ -1,11 +1,17 @@
-import { useEffect, useState, createContext } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useEffect, useState } from "react";
+import {
+  useApolloClient,
+  useQuery,
+  useMutation,
+  useSubscription,
+} from "@apollo/client";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Login from "./components/Login";
 import TokenContext from "./hooks/TokenContext";
 import Recommend from "./components/Recommend";
+import { BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -18,6 +24,13 @@ const App = () => {
       setToken(window.localStorage.getItem("bookApp-user-token"));
     }
   }, []);
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      console.log(data);
+      alert(`New Book '${data.data.bookAdded.title}' is added`);
+    },
+  });
 
   const logout = () => {
     setToken(null);

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import Select from "react-select";
 
-import { EDIT_AUTHOR_BIRTHYEAR, ALL_AUTHORS } from "./queries";
+import { EDIT_AUTHOR_BIRTHYEAR, ALL_AUTHORS } from "../queries";
 
 const AuthorsBirthYear = ({ authors }) => {
   const [name, setName] = useState("");
