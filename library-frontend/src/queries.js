@@ -20,6 +20,7 @@ export const ALL_BOOKS = gql`
         name
       }
       genres
+      id
     }
   }
 `;
@@ -83,6 +84,12 @@ export const BOOK_ADDED = gql`
       published
       id
       genres
+      author {
+        born
+        id
+        bookCount
+        name
+      }
     }
   }
 `;

@@ -134,8 +134,9 @@ const resolvers = {
           id: uuid(),
         });
         await newBook.save();
-        pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
-        return newBook.populate("author");
+        const book = newBook.populate("author");
+        pubsub.publish("BOOK_ADDED", { bookAdded: book });
+        return book;
       } catch (error) {
         throw new GraphQLError("Saving books failed", {
           extensions: {

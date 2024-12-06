@@ -13,6 +13,22 @@ import TokenContext from "./hooks/TokenContext";
 import Recommend from "./components/Recommend";
 import { ALL_BOOKS, BOOK_ADDED } from "./queries";
 
+export const updateCache = (cache, query, addedBook) => {
+  // helper that is used to eliminate saving same person twice
+  const uniqByID = (a) => {
+    let seen = new Set();
+    return a.filter((item) => {
+      let k = item.id;
+      return seen.has(k) ? false : seen.add(k);
+    });
+  };
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByID(allBooks.concat(addedBook)),
+    };
+  });
+};
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
@@ -25,21 +41,20 @@ const App = () => {
     }
   }, []);
 
+  // function that takes care of manipulating cache
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       console.log(data);
       const addedBook = data.data.bookAdded;
       alert(`New Book '${addedBook.title}' is added`);
-      client.cache.updateQuery(
+      updateCache(
+        client.cache,
         {
           query: ALL_BOOKS,
           variables: { genre: "" },
         },
-        ({ allBooks }) => {
-          return {
-            allBooks: allBooks.concat(addedBook),
-          };
-        },
+        addedBook,
       );
     },
   });
