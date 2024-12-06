@@ -6,19 +6,18 @@ import TokenContext from "../hooks/TokenContext";
 import AuthorsBirthYear from "./AuthorsBirthYear";
 
 const Authors = (props) => {
-  const {token} = useContext(TokenContext)
-  const result = useQuery(ALL_AUTHORS)
+  const { token } = useContext(TokenContext);
+  const result = useQuery(ALL_AUTHORS);
 
   if (!props.show) {
-    return null
+    return null;
   }
-
 
   if (result.loading) {
-    return <div>loading...</div>
+    return <div>loading...</div>;
   }
 
-  const authors = result.data.allAuthors
+  const authors = result.data.allAuthors;
 
   return (
     <div>
@@ -39,11 +38,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      {
-        token && <AuthorsBirthYear authors={authors}/>
-      }
+      {token && <AuthorsBirthYear authors={authors} />}
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;

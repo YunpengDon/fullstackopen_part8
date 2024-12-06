@@ -4,49 +4,59 @@ import TokenContext from "../hooks/TokenContext";
 import { LOGIN } from "./queries";
 
 const Login = (props) => {
-  const {setToken, setPage} = useContext(TokenContext)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const { setToken, setPage } = useContext(TokenContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [loginServive, result] = useMutation(LOGIN,{
+  const [loginServive, result] = useMutation(LOGIN, {
     onError: (error) => {
-      console.log(error)
-    }
-  })
+      console.log(error);
+    },
+  });
   useEffect(() => {
     if (result.data) {
-      setToken(result.data.login.value)
-      window.localStorage.setItem("bookApp-user-token", result.data.login.value)
-      setPage("authors")
+      setToken(result.data.login.value);
+      window.localStorage.setItem(
+        "bookApp-user-token",
+        result.data.login.value,
+      );
+      setPage("authors");
     }
-  }, [result.data, setToken, setPage])
+  }, [result.data, setToken, setPage]);
 
   if (!props.show) {
-    return null
+    return null;
   }
-  
+
   const submit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     loginServive({
-      variables: {username, password}
-    })
+      variables: { username, password },
+    });
 
-    setUsername('')
-    setPassword('')
-  }
-
+    setUsername("");
+    setPassword("");
+  };
 
   return (
     <form onSubmit={submit}>
       <div>
-        name <input type="text" onChange={({target})=> setUsername(target.value)}/>
+        name{" "}
+        <input
+          type="text"
+          onChange={({ target }) => setUsername(target.value)}
+        />
       </div>
       <div>
-        password <input type="password" onChange={({target}) => setPassword(target.value)}/>
+        password{" "}
+        <input
+          type="password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
       </div>
       <button type="submit">login</button>
     </form>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

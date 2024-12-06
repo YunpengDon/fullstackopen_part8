@@ -3,27 +3,29 @@ import { CURRENT_USER, ALL_BOOKS } from "./queries";
 import { useEffect } from "react";
 
 const Recommend = (props) => {
-  const currentUserResult = useQuery(CURRENT_USER)
+  const currentUserResult = useQuery(CURRENT_USER);
   const bookResult = useQuery(ALL_BOOKS, {
-    variables: {genre: ""}
-  })
+    variables: { genre: "" },
+  });
 
   if (!props.show) {
-    return null
+    return null;
   }
-  
+
   if (currentUserResult.loading || bookResult.loading) {
-    return <div>loading...</div>
+    return <div>loading...</div>;
   }
 
-  const genre = currentUserResult.data.me.favoriteGenre
+  const genre = currentUserResult.data.me.favoriteGenre;
 
-  const books = bookResult.data.allBooks
+  const books = bookResult.data.allBooks;
 
-  
-  return <div>
-    <h2>Recommendations</h2>
-    <div>books in your favorite genre <strong>{genre}</strong></div>
+  return (
+    <div>
+      <h2>Recommendations</h2>
+      <div>
+        books in your favorite genre <strong>{genre}</strong>
+      </div>
       <table>
         <tbody>
           <tr>
@@ -34,18 +36,18 @@ const Recommend = (props) => {
           {books.map((a) => {
             if (genre && a.genres.includes(genre)) {
               return (
-              <tr key={a.title}>
+                <tr key={a.title}>
                   <td>{a.title}</td>
                   <td>{a.author.name}</td>
                   <td>{a.published}</td>
                 </tr>
-              )
+              );
             }
-          }
-          )}
+          })}
         </tbody>
       </table>
-  </div>
-}
+    </div>
+  );
+};
 
-export default Recommend
+export default Recommend;
