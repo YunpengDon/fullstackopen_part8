@@ -11,7 +11,7 @@ import NewBook from "./components/NewBook";
 import Login from "./components/Login";
 import TokenContext from "./hooks/TokenContext";
 import Recommend from "./components/Recommend";
-import { BOOK_ADDED } from "./queries";
+import { ALL_BOOKS, BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -28,7 +28,19 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       console.log(data);
-      alert(`New Book '${data.data.bookAdded.title}' is added`);
+      const addedBook = data.data.bookAdded;
+      alert(`New Book '${addedBook.title}' is added`);
+      client.cache.updateQuery(
+        {
+          query: ALL_BOOKS,
+          variables: { genre: "" },
+        },
+        ({ allBooks }) => {
+          return {
+            allBooks: allBooks.concat(addedBook),
+          };
+        },
+      );
     },
   });
 
